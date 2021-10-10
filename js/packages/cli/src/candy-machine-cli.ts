@@ -636,22 +636,27 @@ programCommand('sign')
 programCommand('sign_all')
   .option('-b, --batch-size <string>', 'Batch size', '10')
   .option('-d, --daemon', 'Run signing continuously', false)
+  .option('-cma, --cndy <string>', 'Candy Machine Address', '')
   .action(async (directory, cmd) => {
-    const { keypair, env, cacheName, batchSize, daemon } = cmd.opts();
-    const cacheContent = loadCache(cacheName, env);
+    const { keypair, env, batchSize, daemon, cndy } = cmd.opts();
+    // const cacheContent = loadCache(cacheName, env);
     const walletKeyPair = loadWalletKey(keypair);
     const anchorProgram = await loadCandyProgram(walletKeyPair, env);
-    const candyAddress = cacheContent.candyMachineAddress;
+    // const candyAddress = cacheContent.candyMachineAddress;
+    const candyAddress = cndy;
 
     const batchSizeParsed = parseInt(batchSize);
     if (!parseInt(batchSize)) {
       throw new Error('Batch size needs to be an integer!');
     }
 
-    log.debug('Creator pubkey: ', walletKeyPair.publicKey.toBase58());
-    log.debug('Environment: ', env);
-    log.debug('Candy machine address: ', candyAddress);
-    log.debug('Batch Size: ', batchSizeParsed);
+    console.log('*******************');
+    // console.log('commands ', cmd.opts());
+    console.log('Creator pubkey: ', walletKeyPair.publicKey.toBase58());
+    console.log('Environment: ', env);
+    console.log('Candy machine address: ', candyAddress);
+    console.log('Batch Size: ', batchSizeParsed);
+    console.log('*******************');
     await signAllMetadataFromCandyMachine(
       anchorProgram.provider.connection,
       walletKeyPair,
